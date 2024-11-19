@@ -6,13 +6,16 @@
     "strict": true,
     "skipLibCheck": true,
     "lib": [
-      "ESNext"
+      "ESNext","dom"
     ],
     "types": [
       "@cloudflare/workers-types/2023-07-01",
       "vite/client"
     ],
     "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx"
+    "jsxImportSource": "hono/jsx",
+    "outDir": "./dist",
+    "allowSyntheticDefaultImports": true
   },
+  "include": ["src/**/*"]  // src フォルダを含める
 }

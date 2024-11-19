@@ -1,0 +1,60 @@
+.window {
+    border: 2px solid black;
+    background-color: #FFFFFF;
+/*      box-shadow: 3px 3px #808080; */
+    position: relative;
+    overflow: hidden; 
+  }
+
+  .title-bar {
+    background-color: #000080;
+    color: white;
+    padding: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .title {
+    font-size: 14px;
+  }
+
+  /* マップのサイズを指定 */
+  #map {
+    height: 50vh;
+    width: 100%;
+  }
+
+  /* オムライス指数リストのスタイル */
+  #omurice-list {
+    overflow-y: scroll;
+    border: 1px solid #ccc; /* 見やすさのためにボーダーを追加（任意） */
+    padding: 10px;
+    background-color: #f0f0f0;
+  }
+
+  .content {
+    padding: 10px;
+    height: 330px; 
+    overflow-y: scroll; /* 常にスクロールバーを表示 */
+    font-size: 12px;
+    background-color: white;
+    box-sizing: border-box;
+    -webkit-overflow-scrolling: touch; /* iOSでのスムーズスクロール */
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+
+  th {
+    background-color: #333;
+    color: white;
+  }
