@@ -15,6 +15,8 @@ app.get('/', (c) => {
 app.get('/newmap', (c) => {
   return c.render(
     <html>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/simplebar@5.3.6/dist/simplebar.min.js"></script>
+    <link href="/static/newmap.css" rel="stylesheet" />
     <Header>
     <div id="map"></div>
     <div class="content" data-simplebar data-simplebar-auto-hide="false">
@@ -31,46 +33,269 @@ app.get('/newmap', (c) => {
       </table>
       </div>
     </div>
+    </Header>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <script src="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script src='static/main.js' defer></script>
-    </Header>
     </html>
   );
 });
 
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { serve } from '@hono/node-server';
-import ReactDOMServer from 'react-dom/server';
-import MapComponent from './newmap';
-import { getEnvironmentData } from 'worker_threads';
+// エントリーポイントとしてnewmapを追加
+app.get('/omuregist', (c) => {
+  return c.render(
+    <html>
+    <title>オムライス登録</title>
+    <Header>
+    <div class="content" data-simplebar data-simplebar-auto-hide="false">
+    <header>オムライス登録</header>
+      <main>
+        <form id="uploadForm" method="post" enctype="multipart/form-data">
+          <div class="text">
+            <label for="station">駅名:</label>
+            <input type="text" name="station" id="station" required/>
+          </div>
+          <div class="choices">
+            <p>卵の種類：</p>
+            <label>
+              <input type="radio" name="egg" value="5"/> しっかり焼いた薄焼き卵 <br/>
+            </label>
+            <label>
+              <input type="radio" name="egg" value="3"/> バターたっぷりふわトロ <br/>
+            </label>
+            <label>
+              <input type="radio" name="egg" value="1"/> 野菜などが入っている <br/>
+            </label>
+            <label>
+              <input type="radio" name="egg" value="0"/> その他 <br/>
+            </label>
+          </div>
+          <div class="choices">
+            <p>ライスの種類：</p>
+            <label>
+              <input type="radio" name="rice" value="10"/> チキンライス <br/>
+            </label>
+            <label>
+              <input type="radio" name="rice" value="5"/> ケチャップライス <br/>
+            </label>
+            <label>
+              <input type="radio" name="rice" value="2"/> ピラフ <br/>
+            </label>
+            <label>
+              <input type="radio" name="rice" value="0"/> 白飯 <br/>
+            </label>
+          </div>
+          <div class="choices">
+            <p>ソースの種類：</p>
+            <label>
+              <input type="radio" name="sauce" value="5"/> ケチャップ <br/>
+            </label>
+            <label>
+              <input type="radio" name="sauce" value="4"/> ケチャップベースのソース <br/>
+            </label>
+            <label>
+              <input type="radio" name="sauce" value="2"/> デミグラスソース <br/>
+            </label>
+            <label>
+              <input type="radio" name="sauce" value="0"/> その他 <br/>
+            </label>
+          </div>
+          <div class="file-upload">
+            <label for="file">画像をアップロード：</label>
+            <input type="file" id="file" name="file" accept="image/*" required/>
+          </div>
+          <div class="button-container">
+            <input type="submit" value="送信" class="button"/>
+          </div>
+        </form>
+        <div id="completeMessage" class="complete-message">完了しました </div>
+      </main>
+      <footer>(c) OmuQuest</footer>
+    </div>
+    </Header>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script type="text/javascript" src='static/main.js' defer></script>
+    <script type="text/javascript" src='static/omuregist.js' defer></script>
+    </html>
+  );
+});
 
-// /newmap エントリーポイントを設定
-app.get('/newmap2', (c) => {
-  const html = ReactDOMServer.renderToString(<MapComponent />);
-  return c.html(`<!DOCTYPE html>
-<html>
-  <head>
-    <title>Map Page</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  </head>
-  <body>
-    <div id="root">${html}</div>
-    <script src="https://unpkg.com/react/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom/umd/react-dom.production.min.js"></script>
-    <script src="/main.js"></script>
-  </body>
-</html>`);
+app.get('/omuregcomplete', (c) => {
+  return c.render(
+    <html>
+    <title>ファイルアップロード</title>
+    <link rel="stylesheet" href="static/style.css"/>
+    <link rel="stylesheet" href="static/omuregcomplete.css"/>
+    <Header>
+    <div id="map"></div>
+    <div class="content" data-simplebar data-simplebar-auto-hide="false">
+      <form id="uploadForm" enctype="multipart/form-data">
+        <label for="file">ファイルを選択:</label>
+        <input type="file" id="file" name="file" required/><br/><br/>
+        <button type="submit">アップロード</button>
+      </form>
+      <div id="completeMessage" class="complete-message">完了しました</div>
+    </div>
+    </Header>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script src='static/main.js' defer></script>
+    <script type="text/javascript" src='static/omuregcomplete.js' defer></script>
+    </html>
+  );
+});
+
+app.get('/station', (c) => {
+  const station_id = c.req.param('station_id')
+  const station_name = c.req.param('station_name')
+
+  return c.render(
+    <html>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>駅周辺情報</title>
+    <link rel="stylesheet" href="static/style.css"/>
+    <link rel="stylesheet" href="static/station.css"/>
+    <Header>
+    <div class="content" data-simplebar data-simplebar-auto-hide="false">
+    中目黒駅 <br/>
+            オムライス指数: 33<br/><br/>
+
+            喫茶店の数: 15件<br/>
+            町中華の数: 13件<br/>
+            
+            6: 中目黒駅周辺には比較的古い商店街が存在し、少し懐かしさを感じるが、現代的な店も多い。<br/>
+            7: 駅周辺には細い道や入り組んだ路地が多く、散策するとレトロな雰囲気を味わえる。<br/>
+            4: 古くからの営業を続ける店は残っているが、新しい開発の影響でその数は限られている。<br/>
+            3: 古いショーケースや食品サンプルを飾っている店は少なく、全体的にモダンな印象が強い。<br/>
+    </div>
+      <div class="input-window" data-simplebar data-simplebar-auto-hide="false">
+        <div class="title-bar">
+           <span class="title">情報登録</span>
+           <div class="buttons">
+              <button class="minimize">-</button>
+              <button class="close">x</button>
+           </div>
+        </div>
+        <div class="contentb" data-simplebar data-simplebar-auto-hide="false">
+          <form id="uploadForm" method="post" enctype="multipart/form-data">
+            <div class="text">
+              <label for="station">駅名</label>
+              <input type="text" name="station" id="station" value="" required/>
+            </div>
+            <fieldset class="choices">
+              <legend>商店街の様子</legend>
+                <label>
+                  <input type="radio" name="shoutengai" value="10"/> アーケードのある昔ながらの商店街があり、活況である <br/>
+                </label>
+                <label>
+                  <input type="radio" name="shoutengai" value="5"/> 商店街はあるが、シャッターが閉まっている店がちらほら <br/>
+                </label>
+                <label>
+                  <input type="radio" name="shoutengai" value="0"/> 商店街が見当たらない <br/>
+                </label>
+            </fieldset>
+            <fieldset class="choices">
+              <legend>周辺道路の様子</legend>
+              <label>
+                <input type="radio" name="michi" value="10"/> 細い路地があちこちにあり、町の奥行きを感じる <br/>
+              </label>
+              <label>
+                <input type="radio" name="michi" value="5"/> 道は少ないが整備されていない <br/>
+              </label>
+              <label>
+                <input type="radio" name="michi" value="0"/> きれいに区画整理されている。 <br/>
+              </label>
+            </fieldset>
+            <fieldset class="choices">
+              <legend>古い店が残っているか</legend>
+              <label>
+                <input type="radio" name="furuiMise" value="10"/> 昔からやっていると思われる店が多く見られる <br/>
+              </label>
+              <label>
+                <input type="radio" name="furuiMise" value="5"/> 再開発が進んでおり、ビルに入っている店が多い <br/>
+              </label>
+              <label>
+                <input type="radio" name="furuiMise" value="0"/> チェーン店のような店が大半である <br/>
+              </label>
+            </fieldset>
+            <fieldset class="choices">
+              <legend>ショーケースや食品サンプル</legend>
+              <label>
+                <input type="radio" name="shokuSample" value="10"/> ショーケースの中に食品サンプルを置いている店がある <br/>
+              </label>
+              <label>
+                <input type="radio" name="shokuSample" value="5"/> ショーケースは無いが、写真やメニューを出している店がある <br/>
+              </label>
+              <label>
+                <input type="radio" name="shokuSample" value="2"/> ランチ時の案内程度 <br/>
+              </label>
+              <label>
+                <input type="radio" name="shokuSample" value="0"/> 表からはあまりよく分からない <br/>
+              </label>
+            </fieldset>
+            <fieldset class="choices">
+              <legend>古い飲食ビルがあるかどうか</legend>
+              <label>
+                <input type="radio" name="building" value="10"/> 昔からある古い飲食ビルが何軒もあり、昼間でも営業している <br/>
+              </label>
+              <label>
+                <input type="radio" name="building" value="5"/> 古い飲食ビルはあるが、昼間は営業していない店が大半 <br/>
+              </label>
+              <label>
+                <input type="radio" name="building" value="2"/> 飲食ビルはあるが、大半が新しいビルで古い店は見当たらない <br/>
+              </label>
+              <label>
+                <input type="radio" name="building" value="0"/> 飲食ビルは全く見当たらない <br/>
+              </label>
+            </fieldset>
+            <fieldset class="choices">
+              <legend>チェーン店が少ないかどうか</legend>
+              <label>
+                <input type="radio" name="chain" value="10"/> チェーン店ではないローカルの店が大半 <br/>
+              </label>
+              <label>
+                <input type="radio" name="chain" value="7"/> チェーン店がちらほらあるが、ローカルの店が多い <br/>
+              </label>
+              <label>
+                <input type="radio" name="chain" value="5"/> チェーン店が多くあるが、ローカルの店も多い <br/>
+              </label>
+              <label>
+                <input type="radio" name="chain" value="2"/> 大半がチェーン店のように見える <br/>
+              </label>
+            </fieldset>
+          <div class="file-upload">
+            <label for="file">画像をアップロード：</label>
+            <input type="file" id="file" name="file" accept="image/*"/>
+          </div>
+          <div class="button-container">
+            <input type="submit" value="送信" class="button"/>
+          </div>
+        </form>
+      </div>
+      <footer>(c) OmuQuest</footer>
+    </div>
+
+
+    </Header>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script src='static/main.js' defer></script>
+    <script type="text/javascript" src='static/station.js' defer></script>
+    </html>
+  );
 });
 
 
-app.get('/getEnv', (c) => {
+
+import {Context} from 'hono';
+
+// 以下は関数
+
+app.get('/getEnv', (c:Context) => {
   const result = {
-    supabaseUrl: getEnvironmentData('SUPERBASE_API_URL'),
-    supabaseKey: getEnvironmentData('SUPABASE_API_KEY')
+    supabaseUrl: c.env.SUPABASE_API_URL,
+    supabaseKey: c.env.SUPABASE_API_KEY
   }
   return c.json(result,200);
 });

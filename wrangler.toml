@@ -3,8 +3,12 @@ compatibility_date = "2024-11-09"
 pages_build_output_dir = "./dist"
 compatibility_flags = [ "nodejs_compat" ]
 
-# [vars]
-# MY_VAR = "my-variable"
+[vars]
+GOOGLE_API_KEY="AIzaSyBLhDc1I6CQmq8ee0FmaUMChpBTs40AmgM"
+CHANNEL_ACCESS_TOKEN="PszOTlKOMLcx8fVCcddA3XbjgdjyVtquO7P6wGD67YfdvIL53F3PEZjZdlr1Ov6jxi2JCI9Dolq3n060ce7TKaNkQGsN6DjTg1mI5ZZy0SRG7CeicO/CSFfsmAnrYAHzQtr3KDQ0gjzGhAFbt3rBggdB04t89/1O/w1cDnyilFU="
+CHANNEL_SECRET="8d44039a59c80b164d775f0740cc3228"
+SUPABASE_API_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlub3BzbGtjY2V4cnV1YnB1aHlyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjU3NjMzMTUsImV4cCI6MjA0MTMzOTMxNX0.ebVkz6PrThoIJftrh1koO5s0oWqphIx0lVakui4W7_Y"
+SUPABASE_API_URL="https://inopslkccexruubpuhyr.supabase.co"
 
 # [[kv_namespaces]]
 # binding = "MY_KV_NAMESPACE"

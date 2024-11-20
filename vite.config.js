@@ -7,7 +7,7 @@ export default defineConfig({
         build(),
         devServer({
             adapter,
-            entry: 'src/index.tsx' // フロントエンドエントリーポイント
+            entry: 'src/index.tsx' // 全てのエントリーポイント
         }),
     ],
 });

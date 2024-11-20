@@ -128,18 +128,18 @@ function useSavedLocation() {
     }).addTo(map);
 
     // 検索ウィジェットの追加 (Leaflet Control Geocoder)
-    const geocoder = L.Control.geocoder({
-      defaultMarkGeocode: true
-    }).addTo(map);
+//    const geocoder = L.Control.geocoder({
+//      defaultMarkGeocode: true
+//    }).addTo(map);
 
     // 現在位置に移動するウィジェットの追加 (Leaflet Locate Control)
-    L.control.locate({
-      position: 'topright',
-      keepCurrentZoomLevel: true,
-      strings: {
-          title: "現在位置を表示"
-      }
-    }).addTo(map);
+//    L.control.locate({
+//      position: 'topright',
+//      keepCurrentZoomLevel: true,
+//      strings: {
+//          title: "現在位置を表示"
+//      }
+//    }).addTo(map);
 
     // 地図が移動したりリサイズされたときに駅リストを更新
     map.on('moveend', fetchStationData);   // 地図の位置が変更されたとき
@@ -149,7 +149,7 @@ function useSavedLocation() {
   }
 
   async function initMap() {
-    const response = await fetch('/.netlify/functions/getEnv');  // サーバーレス関数を呼び出す
+    const response = await fetch('/getEnv');  // サーバーレス関数を呼び出す
     const env = await response.json();
     supabaseClient = supabase.createClient(env.supabaseUrl, env.supabaseKey);
 
@@ -225,7 +225,7 @@ function useSavedLocation() {
           station.index = result.index;
         } else if( flag ) {
           // Fetch the Omurice Index using getOmuIndexMain() function (assumed to be defined)
-          const response = await fetch(`/.netlify/functions/getOmuIndexByID?station_id=${station.station_id}`);
+          const response = await fetch(`/getOmuIndexByID?station_id=${station.station_id}`);
           const omuIndex = await response.json();
           station.index = omuIndex.index;
         } else {
@@ -242,7 +242,7 @@ function useSavedLocation() {
     updateMapAndList(data);
   }
   async function fetchOmuIndexData(station_name,station_id,lat,lng) {
-    const result = await fetch(`/.netlify/functions/fetchOmuIndexData?station_name=${station_name}&station_id=${station_id}&lat=${lat}&lng=${lng}`);
+    const result = await fetch(`/fetchOmuIndexData?station_name=${station_name}&station_id=${station_id}&lat=${lat}&lng=${lng}`);
     console.log(`RESULT::: ${result}`);
     return await result.json();
   }

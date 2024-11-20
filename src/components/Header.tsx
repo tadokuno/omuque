@@ -13,8 +13,8 @@ const Header: FC = (props) => {
               <a href="/static/topmenu.html"><button id="close" className="close">x</button></a>
             </div>
           </div>
-        </div>
         {props.children}
+        </div>
       </body>
   );
 };
