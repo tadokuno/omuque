@@ -3,8 +3,7 @@ const app = new Hono();
 const exclusionCafe = ["ルノアール", "TULLY’S COFFEE", "タリーズコーヒー", "カフェ・ベローチェ", "椿屋カフェ", "カフェ・ド・クリエ", "ドトールコーヒーショップ", "サンマルクカフェ", "エクセルシオール"];
 const exclusionRestraunt = ["揚州商人", "銀座アスター", "日高屋", "バーミヤン", "つばめグリル", "オムサコライス", "やよい軒", "ロイヤルホスト", "俺のハンバーグ", "卵と私", "ポムの樹", "洋麺屋五右衛門", "ガスト", "中華食堂 一番館", "三九厨房"];
 // 駅の緯度経度を取得する関数
-export async function getCoordinates(stationName) {
-    const apiKey = process.env.GOOGLE_API_KEY;
+export async function getCoordinates(apiKey, stationName) {
     const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(stationName)}&key=${apiKey}`;
     console.log(geocodeUrl);
     const response = await fetch(geocodeUrl);
@@ -18,8 +17,7 @@ export async function getCoordinates(stationName) {
     }
 }
 // Nearby Search APIを使用して店舗数を取得する関数
-async function getAllPlaceCount(lat, lng, tpy, kwd, radius, exclusion) {
-    const apiKey = process.env.GOOGLE_API_KEY;
+async function getAllPlaceCount(apiKey, lat, lng, tpy, kwd, radius, exclusion) {
     let totalCount = 0;
     let nextPageToken = null;
     let places = "";
@@ -68,13 +66,13 @@ async function getAllPlaceCount(lat, lng, tpy, kwd, radius, exclusion) {
     };
 }
 // オムライスインデックスを計算する関数
-export async function getOmuIndexCountable(lat, lng) {
+export async function getOmuIndexCountable(apiKey, lat, lng) {
     try {
         // 緯度経度から指定した範囲内の店舗数を取得
-        const localCafe = await getAllPlaceCount(lat, lng, "cafe", "local", 300, exclusionCafe);
-        const chineseRestaurant = await getAllPlaceCount(lat, lng, "restaurant", encodeURIComponent("町中華"), 300, exclusionRestraunt);
-        const westernRestaurant = await getAllPlaceCount(lat, lng, "restaurant", encodeURIComponent("洋食屋"), 300, exclusionRestraunt);
-        const snack = await getAllPlaceCount(lat, lng, "bar", encodeURIComponent("スナック"), 300, exclusionRestraunt);
+        const localCafe = await getAllPlaceCount(apiKey, lat, lng, "cafe", "local", 300, exclusionCafe);
+        const chineseRestaurant = await getAllPlaceCount(apiKey, lat, lng, "restaurant", encodeURIComponent("町中華"), 300, exclusionRestraunt);
+        const westernRestaurant = await getAllPlaceCount(apiKey, lat, lng, "restaurant", encodeURIComponent("洋食屋"), 300, exclusionRestraunt);
+        const snack = await getAllPlaceCount(apiKey, lat, lng, "bar", encodeURIComponent("スナック"), 300, exclusionRestraunt);
         // 結果をオブジェクトとして返す
         return {
             localCafe: { count: localCafe.count, message: localCafe.message },

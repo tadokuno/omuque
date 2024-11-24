@@ -4,9 +4,6 @@ import { z } from "zod";
 import type {OpenaiData} from "./types";
 
 // Initialize the OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_Key!,
-});
 
 // Define the JSON schema using Zod
 const OmuIndexSchema = z.object({
@@ -37,7 +34,7 @@ const OmuIndexSchema = z.object({
 });
 
 // Function to calculate the Omu Index
-export async function calculateOmuIndex(stationName: string): Promise<OpenaiData|null> {
+export async function calculateOmuIndex(apiKey:string, stationName: string): Promise<OpenaiData|null> {
   const prompt = `
     あなたは日本の町の懐かしさを評価する専門家です。駅名「${stationName}」に基づいて、以下の4つの要素を0から10のスケールで評価し、それぞれの理由を述べてください：
     - 古い商店街の存在感 (shoutengai)
@@ -62,6 +59,9 @@ export async function calculateOmuIndex(stationName: string): Promise<OpenaiData
   try {
     console.log("openai call");
     // Make a request to the OpenAI API
+    const openai = new OpenAI({
+      apiKey,
+    });
     const completion = await openai.beta.chat.completions.parse({
       model: "gpt-4o-2024-08-06",
       messages: [

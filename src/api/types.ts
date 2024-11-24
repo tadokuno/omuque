@@ -65,3 +65,8 @@ export interface OmuriceIndexData extends OmuriceIndexHeader {
     googlemap: GoogleMapData;
     openai: OpenaiData;
 };
+
+export type apiKeys = {
+    openaiApiKey: string,
+    googleApiKey: string,
+};

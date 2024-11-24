@@ -92,8 +92,12 @@ app.get('/getOmuIndexByID', async (c) => {
     if (!station_id) {
         return c.json({ error: 'Missing station_id' }, 400);
     }
+    const keys = {
+        openaiApiKey: c.env.OPENAI_API_KEY,
+        googleApiKey: c.env.GOOGLE_API_KEY
+    };
     try {
-        const result = await getOmuIndexByID(station_id);
+        const result = await getOmuIndexByID(keys, station_id);
         console.log(result);
         return c.json(result);
     }

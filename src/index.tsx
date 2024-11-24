@@ -1,8 +1,14 @@
 import { Hono } from 'hono';
 import { renderer } from './renderer';
 import Header from './components/Header';
+import type {apiKeys} from './api/types';
 
-const app = new Hono();
+type Bindings = {
+  OPENAI_API_KEY: string;
+  GOOGLE_API_KEY: string;
+};
+
+const app = new Hono<{Bindings: Bindings }>();
 
 app.use(renderer);
 
@@ -376,8 +382,13 @@ app.get('/getOmuIndexByID', async (c) => {
     return c.json({ error: 'Missing station_id' }, 400);
   }
 
+  const keys = {
+    openaiApiKey: c.env.OPENAI_API_KEY,
+    googleApiKey: c.env.GOOGLE_API_KEY
+  };
+
   try {
-    const result = await getOmuIndexByID(station_id);
+    const result = await getOmuIndexByID(keys,station_id);
     console.log(result);
     return c.json(result);
   } catch (error) {

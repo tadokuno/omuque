@@ -1,13 +1,13 @@
 import { getCoordinates, getOmuIndexCountable } from './placesApi';
 import { calculateOmuIndex } from './openaiApi';
 import { registerOmuriceIndex, fetchOmuriceIndexData, fetchStationMaster, fetchStationMasterByID } from './accesslib';
-import type { StationData,OmuriceIndexHeader,OmuriceIndexData, GoogleMapData,OpenaiData } from './types';
+import type { StationData,OmuriceIndexHeader,OmuriceIndexData, GoogleMapData,OpenaiData, apiKeys } from './types';
 
 function roundCount(count: number): number {
   return Math.floor(count > 10 ? 10 : count);
 }
 
-export async function getOmuIndexByID(station_id: string) {
+export async function getOmuIndexByID(keys:apiKeys, station_id: string) {
   if (!station_id) {
     return null;
   }
@@ -18,7 +18,7 @@ export async function getOmuIndexByID(station_id: string) {
   console.log(station_id);
   console.log(station);
 
-  const result = await getOmuIndexMain(station.station_name, station.station_id, station.lat, station.lng);
+  const result = await getOmuIndexMain(keys, station.station_name, station.station_id, station.lat, station.lng);
   return result;
 }
 
@@ -28,7 +28,7 @@ export async function getOmuIndexByCord(lat: number, lng: number) {
   // station_id からオムライス指数を検索する。指数が未計算の場合、計算して登録する。
 }
 
-export async function omuIndexMain(stationName: string): Promise<OmuriceIndexData|null> {
+export async function omuIndexMain(keys: apiKeys, stationName: string): Promise<OmuriceIndexData|null> {
   if (!stationName) {
     return null;
   }
@@ -38,7 +38,7 @@ export async function omuIndexMain(stationName: string): Promise<OmuriceIndexDat
     return null;
   }
   for (let station of data) {
-    const result:OmuriceIndexData|null = await getOmuIndexMain(station.station_name, station.station_id, station.lat, station.lng);
+    const result:OmuriceIndexData|null = await getOmuIndexMain(keys, station.station_name, station.station_id, station.lat, station.lng);
     if( !result ) {
         return result;
     }
@@ -46,7 +46,7 @@ export async function omuIndexMain(stationName: string): Promise<OmuriceIndexDat
   return null;
 }
 
-async function getOmuIndexMain(stationName: string, station_id: number, lat: number, lng: number):Promise<OmuriceIndexData|null> {
+async function getOmuIndexMain(keys: apiKeys, stationName: string, station_id: number, lat: number, lng: number):Promise<OmuriceIndexData|null> {
   try {
     let point = 0;
 
@@ -54,9 +54,9 @@ async function getOmuIndexMain(stationName: string, station_id: number, lat: num
     if (result != null) {
       return result;
     }
-    const openaiPromise = calculateOmuIndex(stationName); // openai API 時間かかる
+    const openaiPromise = calculateOmuIndex(keys.openaiApiKey,stationName); // openai API 時間かかる
 
-    const result1: GoogleMapData|null = await getOmuIndexCountable(lat, lng); // Places API
+    const result1: GoogleMapData|null = await getOmuIndexCountable(keys.googleApiKey,lat, lng); // Places API
 
     if(!result1) {
         return null;
