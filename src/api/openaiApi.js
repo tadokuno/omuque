@@ -1,5 +1,3 @@
-import OpenAI from "openai";
-import { zodResponseFormat } from "openai/helpers/zod";
 import { z } from "zod";
 // Initialize the OpenAI client
 // Define the JSON schema using Zod
@@ -55,20 +53,22 @@ export async function calculateOmuIndex(apiKey, stationName) {
         return null;
         console.log("openai call");
         // Make a request to the OpenAI API
+        /*
         const openai = new OpenAI({
-            apiKey,
+          apiKey,
         });
         const completion = await openai.beta.chat.completions.parse({
-            model: "gpt-4o-2024-08-06",
-            messages: [
-                { role: "system", content: "次のJSONスキーマに従って出力を生成してください。" },
-                { role: "user", content: prompt },
-            ],
-            response_format: zodResponseFormat(OmuIndexSchema, "omuIndex"),
+          model: "gpt-4o-2024-08-06",
+          messages: [
+            { role: "system", content: "次のJSONスキーマに従って出力を生成してください。" },
+            { role: "user", content: prompt },
+          ],
+          response_format: zodResponseFormat(OmuIndexSchema, "omuIndex"),
         });
         // Get the parsed and validated response
         const omuIndex = completion.choices[0].message.parsed;
         return omuIndex;
+        */
     }
     catch (error) {
         console.error("Error generating Omu Index:", error);

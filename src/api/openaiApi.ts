@@ -61,6 +61,7 @@ export async function calculateOmuIndex(apiKey:string, stationName: string): Pro
     console.log("openai call");
     // Make a request to the OpenAI API
     
+    /*
     const openai = new OpenAI({
       apiKey,
     });
@@ -72,10 +73,10 @@ export async function calculateOmuIndex(apiKey:string, stationName: string): Pro
       ],
       response_format: zodResponseFormat(OmuIndexSchema, "omuIndex"),
     });
-
     // Get the parsed and validated response
     const omuIndex = completion.choices[0].message.parsed;
     return omuIndex;
+    */
   } catch (error) {
     console.error("Error generating Omu Index:", error);
     return null;
