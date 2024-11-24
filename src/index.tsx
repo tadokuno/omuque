@@ -383,7 +383,7 @@ app.get('/getOmuIndexByID', async (c) => {
   }
 
   const keys = {
-    openaiApiKey: c.env.OPENAI_API_KEY,
+    openaiApiKey: c.env.GOOGLE_API_KEY,
     googleApiKey: c.env.GOOGLE_API_KEY
   };
 
