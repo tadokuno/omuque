@@ -57,8 +57,10 @@ export async function calculateOmuIndex(apiKey:string, stationName: string): Pro
     }`;
 
   try {
+    return null;
     console.log("openai call");
     // Make a request to the OpenAI API
+    
     const openai = new OpenAI({
       apiKey,
     });

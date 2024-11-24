@@ -52,6 +52,7 @@ export async function calculateOmuIndex(apiKey, stationName) {
       "chain": { "index": 得点, "text": "根拠" },
     }`;
     try {
+        return null;
         console.log("openai call");
         // Make a request to the OpenAI API
         const openai = new OpenAI({
