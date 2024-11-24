@@ -5,7 +5,9 @@ import { defineConfig } from 'vite'
 
 export default defineConfig({
   plugins: [
-    build(),
+    build({
+      entry: 'src/index.tsx'   // 全てのエントリーポイント
+    }),
     devServer({ // 開発環境
       adapter,
       entry: 'src/index.tsx'   // 全てのエントリーポイント
