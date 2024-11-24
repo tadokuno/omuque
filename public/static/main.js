@@ -192,9 +192,9 @@ function useSavedLocation() {
       const row = document.createElement('tr');
       row.innerHTML = `<td>${station.station_name}</td><td>${station.index?station.index:""}</td>`;
 
-      // Add click event to redirect to station.html with station_name as query parameter
+      // Add click event to redirect to /station with station_name as query parameter
       row.addEventListener('click', () => {
-        window.location.href = `station.html?station_id=${station.station_id}`;
+        window.location.href = `/station?station_id=${station.station_id}`;
       });
 
       stationList.appendChild(row);
