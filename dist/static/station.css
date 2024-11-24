@@ -1,0 +1,21 @@
+.content {
+    height: 40vh;  /* タイトルバーの分を引いた高さ */
+} 
+.text label, input {
+    display: inline-block;
+    margin-right: 10px; /* ラベルと入力欄の間に余白を追加 */
+}
+
+.text input {
+    width: 200px; /* 入力欄の幅を調整 */
+}
+.input-window form {
+    flex: 1;
+    padding: 10px;
+    height: 40vh;
+    overflow-y: scroll; /* 常にスクロールバーを表示 */
+    font-size: 14px;
+    background-color: rgb(221, 221, 221);
+    box-sizing: border-box;
+    -webkit-overflow-scrolling: touch; /* iOSでのスムーズスクロール */
+}
