@@ -13,7 +13,7 @@
               document.querySelector('.content').innerHTML = `<h2>${station_name}</h2><p>読み込み中...</p>`;
   
               // Fetch the Omurice Index using getOmuIndexMain() function (assumed to be defined)
-              const response = await fetch(`/.netlify/functions/getOmuIndexByID?station_id=${station_id}`);
+              const response = await fetch(`/getOmuIndexByID?station_id=${station_id}`);
               const omuIndex = await response.json();
               document.querySelector('.content').innerHTML = `${omuIndex.stationName}`;
   
@@ -81,7 +81,7 @@
                       }
                       try {
                           // フォームデータと画像をサーバーに送信
-                          const response = await fetch('/.netlify/functions/upload', {
+                          const response = await fetch('/upload', {
                               method: 'POST',
                               body: JSON.stringify({
                                   table_name: "openai_info",

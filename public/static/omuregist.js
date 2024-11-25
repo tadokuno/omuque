@@ -20,7 +20,7 @@ document.getElementById('uploadForm').addEventListener('submit', async function 
             }
             try {
                 // フォームデータと画像をサーバーに送信
-                const response = await fetch('/.netlify/functions/upload', {
+                const response = await fetch('/upload', {
                     method: 'POST',
                     body: JSON.stringify({
                         station: formData.get('station'),

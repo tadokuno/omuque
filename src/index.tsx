@@ -153,9 +153,10 @@ app.get('/omuregcomplete', (c) => {
 });
 
 app.get('/station', (c) => {
-  const station_id = c.req.param('station_id')
-  const station_name = c.req.param('station_name')
+  const station_id = c.req.query('station_id')
+  const station_name = c.req.query('station_name')
 
+  console.log(`/station ${station_id},${station_name}`);
   return c.render(
     <html>
     <meta charset="UTF-8"/>

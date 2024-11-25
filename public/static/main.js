@@ -194,7 +194,7 @@ function useSavedLocation() {
 
       // Add click event to redirect to /station with station_name as query parameter
       row.addEventListener('click', () => {
-        window.location.href = `/station?station_id=${station.station_id}`;
+        window.location.href = `/station?station_id=${station.station_id}&station_name=${station.station_name}`;
       });
 
       stationList.appendChild(row);
