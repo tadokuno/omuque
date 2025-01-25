@@ -49,11 +49,14 @@ app.get('/newmap', (c) => {
   );
 });
 
-// エントリーポイントとしてnewmapを追加
+// エントリーポイントとしてomuregistを追加
 app.get('/omuregist', (c) => {
   return c.render(
     <html>
     <title>オムライス登録</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/simplebar@5.3.6/dist/simplebar.min.js"></script>
+    <link rel="stylesheet" href="static/style.css"/>
+    <link href="/static/omuregist.css" rel="stylesheet" />
     <Header>
     <div class="content" data-simplebar data-simplebar-auto-hide="false">
     <header>オムライス登録</header>
