@@ -1,11 +1,11 @@
-        // Function to get URL parameters
-        function getQueryParam(param) {
+// Function to get URL parameters
+function getQueryParam(param) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(param);
-          }
+}
           
-          // Function to fetch and display Omurice Index
-          async function displayStationInfo() {
+// Function to fetch and display Omurice Index
+async function displayStationInfo() {
             const station_id = getQueryParam('station_id');
             const station_name = getQueryParam('station_name');
             if (station_id) {
@@ -51,11 +51,11 @@
             } else {
               document.querySelector('.content').innerHTML = '<p>駅が選択されていません。</p>';
             }
-          }
+}
           
-          // Call displayStationInfo on page load
-          window.onload = displayStationInfo;
-          document.getElementById('uploadForm').addEventListener('submit', async function (e) {
+// Call displayStationInfo on page load
+window.onload = displayStationInfo;
+document.getElementById('uploadForm').addEventListener('submit', async function (e) {
       e.preventDefault();
   
               const formData = new FormData(e.target);
@@ -70,9 +70,9 @@
                   const reader = new FileReader();
                   reader.onloadend = async () => {
                       const imageData = reader.result.split(',')[1];  // Base64データに変換
-  
+                      let location;
                       try {
-                          const location = await getUserLocation();  // スマホのGPS情報を取得
+                          location = await getUserLocation();  // スマホのGPS情報を取得
                           console.log(location);
                       }
                       catch {
@@ -81,10 +81,9 @@
                       }
                       try {
                           // フォームデータと画像をサーバーに送信
-                          const response = await fetch('/upload', {
+                          const response = await fetch('/uploadStation', {
                               method: 'POST',
                               body: JSON.stringify({
-                                  table_name: "openai_info",
                                   station: formData.get('station'),
                                   shoutengai: formData.get('shoutengai'),
                                   michi: formData.get('michi'),
@@ -106,7 +105,7 @@
                           console.log(result.message);
   
                           if (response.ok) {
-                              document.getElementById('completeMessage').style.display = 'block';
+                            alert("フォームデータの登録完了！")
                           }
                       } catch (error) {
                           console.error('フォームデータの登録に失敗しました: ', error);
@@ -115,4 +114,4 @@
                   };
                   reader.readAsDataURL(file); // 画像をBase64に変換
               }
-          });
+});

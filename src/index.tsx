@@ -6,6 +6,7 @@ import type {apiKeys} from './api/types';
 type Bindings = {
   OPENAI_API_KEY: string;
   GOOGLE_API_KEY: string;
+  GYAZO_ACCESS_TOKEN: string;
 };
 
 const app = new Hono<{Bindings: Bindings }>();
@@ -377,7 +378,7 @@ app.get('/fetchStationIds', async (c) => {
   return c.json(result, 200);
 });
 
-import { getOmuIndexByID } from './api/script'
+import {getOmuIndexByID} from './api/script';
 
 app.get('/getOmuIndexByID', async (c) => {
   // クエリパラメータを取得
@@ -388,7 +389,8 @@ app.get('/getOmuIndexByID', async (c) => {
 
   const keys:apiKeys = {
     openaiApiKey: c.env.OPENAI_API_KEY,
-    googleApiKey: c.env.GOOGLE_API_KEY
+    googleApiKey: c.env.GOOGLE_API_KEY,
+    gyazoApiKey: c.env.GYAZO_ACCESS_TOKEN,
   };
 
   try {
@@ -398,6 +400,119 @@ app.get('/getOmuIndexByID', async (c) => {
   } catch (error) {
     console.error('Error fetching Omu Index by ID:', error);
     return c.json({ error: 'Failed to fetch Omu Index' }, 500);
+  }
+});
+
+// データアップロード
+// バリデーションスキーマ定義
+import {z} from 'zod';
+
+import { uploadImage } from './api/script';
+
+const uploadSchema = z.object({
+  station: z.string(),
+  shoutengai: z.string().nullable(),
+  michi: z.string().nullable(),
+  furui_mise: z.string().nullable(),
+  shoku_sample: z.string().nullable(),
+  building: z.string().nullable(),
+  chain: z.string().nullable(),
+  userLat: z.number(),
+  userLng: z.number(),
+  fileName: z.string(),
+  image: z.string(), // Base64エンコードされた画像データ
+});
+
+app.post('/uploadStation', async (c) => {
+  try {
+      // リクエストのJSONを取得
+      const body = await c.req.json();
+
+      // バリデーション
+      const validatedData = uploadSchema.parse(body);
+
+      // ここでデータの保存処理を行う (例: DB に登録, 画像をCloudflare R2などに保存)
+      // console.log('受信データ:', validatedData);
+
+      // imageファイルのアップロード
+      const imageUrl = uploadImage(c.env.GYAZO_ACCESS_TOKEN,validatedData.image,validatedData.fileName);
+      if(imageUrl==null) {
+        return c.json({ message: 'Image file upload error'}, 400);
+      }
+      console.log('URL: ', imageUrl);
+
+      // DBへの登録
+      const stationId = await accesslib.getStationId(validatedData.station,validatedData.userLat,validatedData.userLng);
+      const openaiId = await accesslib.insertOpenAIInfo(
+        stationId,
+        validatedData.shoutengai,
+        validatedData.michi,
+        validatedData.furui_mise,
+        validatedData.shoku_sample,
+        validatedData.building,
+        validatedData.chain
+      );
+
+      // レスポンスを返す
+      return c.json({ message: 'Upload successful', data: validatedData }, 200);
+  } catch (error) {
+      console.error('Upload Error:', error);
+      if( error instanceof Error ) {
+        return c.json({ message: 'Invalid request', error: error.message }, 400);
+      } else {
+        return c.json({ message: 'Invalid request' }, 400);
+      }
+  }
+});
+
+const uploadOmuriceSchema = z.object({
+  station: z.string(),
+  egg: z.number(),
+  rice: z.number(),
+  sauce: z.number(),
+  userLat: z.number(),
+  userLng: z.number(),
+  fileName: z.string(),
+  image: z.string(), // Base64エンコードされた画像データ
+});
+
+app.post('/uploadOmurice', async (c) => {
+  try {
+      // リクエストのJSONを取得
+      const body = await c.req.json();
+
+      // バリデーション
+      const validatedData = uploadOmuriceSchema.parse(body);
+
+      // ここでデータの保存処理を行う (例: DB に登録, 画像をCloudflare R2などに保存)
+      // console.log('受信データ:', validatedData);
+
+      // imageファイルのアップロード
+      const imageUrl = await uploadImage(c.env.GYAZO_ACCESS_TOKEN,validatedData.image,validatedData.fileName);
+      if(imageUrl==null) {
+        return c.json({ message: 'Image file upload error' }, 400);
+      }
+      console.log('URL: ', imageUrl);
+      // DBへの登録
+      const stationId = await accesslib.getStationId(validatedData.station,validatedData.userLat,validatedData.userLng);
+      const openaiId = await accesslib.registerOmurice(
+        validatedData.station,
+        stationId,
+        validatedData.egg,
+        validatedData.rice,
+        validatedData.sauce,
+        imageUrl
+      );
+
+      // レスポンスを返す
+      return c.json({ message: 'Upload successful', data: validatedData }, 200);
+  } catch (error) {
+      console.error('Upload Error:', error);
+      if( error instanceof Error ) {
+        return c.json({ message: 'Invalid request', error: error.message }, 400);
+      } else {
+        return c.json({ message: 'Invalid request' }, 400);
+      }
   }
 });
 

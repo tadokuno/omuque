@@ -69,4 +69,5 @@ export interface OmuriceIndexData extends OmuriceIndexHeader {
 export type apiKeys = {
     openaiApiKey: string,
     googleApiKey: string,
+    gyazoApiKey: string,
 };

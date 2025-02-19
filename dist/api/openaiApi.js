@@ -5,27 +5,27 @@ import { z } from "zod";
 // Define the JSON schema using Zod
 const OmuIndexSchema = z.object({
     shoutengai: z.object({
-        index: z.number(), // Zodのint型に変更し、整数のみ許可
+        index: z.number(),
         text: z.string(),
     }),
     michi: z.object({
-        index: z.number(), // Zodのint型に変更
+        index: z.number(),
         text: z.string(),
     }),
     furuiMise: z.object({
-        index: z.number(), // Zodのint型に変更
+        index: z.number(),
         text: z.string(),
     }),
     shokuSample: z.object({
-        index: z.number(), // Zodのint型に変更
+        index: z.number(),
         text: z.string(),
     }),
     building: z.object({
-        index: z.number(), // Zodのint型に変更
+        index: z.number(),
         text: z.string(),
     }),
     chain: z.object({
-        index: z.number(), // Zodのint型に変更
+        index: z.number(),
         text: z.string(),
     }),
 });

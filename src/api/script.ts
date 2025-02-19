@@ -2,6 +2,7 @@ import { getCoordinates, getOmuIndexCountable } from './placesApi';
 import { calculateOmuIndex } from './openaiApi';
 import { registerOmuriceIndex, fetchOmuriceIndexData, fetchStationMaster, fetchStationMasterByID } from './accesslib';
 import type { StationData,OmuriceIndexHeader,OmuriceIndexData, GoogleMapData,OpenaiData, apiKeys } from './types';
+import { z } from 'zod';
 
 function roundCount(count: number): number {
   return Math.floor(count > 10 ? 10 : count);
@@ -114,4 +115,48 @@ export function createLineMessage(stationName: string, result1: any, result2: an
   messages += result1.westernRestaurant.message + '\n';
   messages += result1.snack.message + '\n';
   return `${stationName}のオムライス指数: ${point}%\n\n${messages}\n${stationName}のオムライス指数: ${point}%`;
+}
+
+
+
+export async function uploadImage(accessToken: string, base64Image: string, fileName: string): Promise<string> {
+  // Base64 からバイナリデータ (ArrayBuffer) へ変換
+  function base64ToArrayBuffer(base64: string): ArrayBuffer {
+    const binaryString = atob(base64);
+    const len = binaryString.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
+  }
+
+  // 画像をバイナリデータ（ArrayBuffer）に変換
+  const imageArrayBuffer = base64ToArrayBuffer(base64Image);
+  const imageBlob = new Blob([imageArrayBuffer], { type: 'image/png' }); // 画像のMIMEタイプを適宜変更
+
+  // `FormData` に変換
+  const formData = new FormData();
+  formData.append('access_token', accessToken);
+  formData.append('imagedata', imageBlob, fileName);
+
+  console.log('Uploading image to Gyazo...');
+
+  // Gyazo API のレスポンススキーマを定義
+  const GyazoResponseSchema = z.object({
+    url: z.string().url(),
+  });
+
+  // Gyazo API にアップロード
+  const response = await fetch('https://upload.gyazo.com/api/upload', {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error(`Gyazoへのアップロードに失敗しました: ${response.statusText}`);
+  }
+
+  const result = GyazoResponseSchema.parse(await response.json());
+  return result.url; // Gyazo の画像 URL を返す
 }

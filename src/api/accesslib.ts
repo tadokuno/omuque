@@ -8,6 +8,7 @@ function toFloat(param: string|undefined): number|undefined {
   return param?parseFloat(param):undefined;
 }
 
+
 export async function fetchStationIds(
   sw_lat: number,
   sw_lng: number,
@@ -59,7 +60,7 @@ export async function registerOmuriceIndex(station_id: number, omuIndexData: Omu
   }
 }
 
-async function insertOpenAIInfo(stationId: number, shoutengai: any, michi: any, furuiMise: any, shokuSample: any, building: any, chain: any) {
+export async function insertOpenAIInfo(stationId: number, shoutengai: any, michi: any, furuiMise: any, shokuSample: any, building: any, chain: any) {
   const { data, error } = await supabase
     .from('openai_info')
     .insert([
@@ -283,3 +284,86 @@ export async function fetchOmuriceIndexData(stationName: string, station_id: num
     return null;
   }
 }
+
+// オムライス画像データをDBに登録
+export async function registerOmurice(stationName: string, stationId: number, egg: number, rice: number, sauce: number, imageUrl: string ) {
+  try {
+    const { data, error } = await supabase
+    .from('omurice_images')
+    .insert([
+      {
+        station_name: stationName,
+        station_id: stationId,
+        egg: egg,
+        rice: rice,
+        sauce: sauce ,
+        image_path: imageUrl,
+      }
+    ])
+    .select();
+  
+    if (error) {
+      console.error('Error inserting Omurice Data:', error);
+      return null;
+    }
+    console.log('Omurice data inserted:', data);
+    return data?.[0]?.id ?? null;
+  } catch (exception) {
+    console.error('Exception occurred while inserting Omurice Data:', exception);
+    return null;
+  }
+}
+
+// 駅名と現在位置を使ってstation_idを取得する関数
+// ハバースィンの公式を使って2点間の距離を計算
+const calculateDistance = (lat1:number, lng1:number, lat2:number, lng2:number) => {
+  const R = 6371e3; // 地球の半径（メートル）
+  const φ1 = lat1 * Math.PI / 180;
+  const φ2 = lat2 * Math.PI / 180;
+  const Δφ = (lat2 - lat1) * Math.PI / 180;
+  const Δλ = (lng2 - lng1) * Math.PI / 180;
+
+  const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+            Math.cos(φ1) * Math.cos(φ2) *
+            Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return R * c; // 距離（メートル）
+};
+
+export async function getStationId(stationName:string, userLat:number, userLng:number) {
+  // Supabaseからstation_nameを使って検索
+  const { data: stations, error } = await supabase
+      .from('station_master')
+      .select('*')
+      .eq('station_name', stationName);
+
+  if (error) {
+      throw new Error('Supabaseでの駅検索に失敗しました: ' + error.message);
+  }
+
+  if (stations.length === 0) {
+      throw new Error('該当する駅が見つかりません');
+  }
+
+  // 駅が複数見つかった場合、最も近い駅を選択
+  if (stations.length > 1) {
+      let closestStation = stations[0];
+      let closestDistance = calculateDistance(userLat, userLng, closestStation.lat, closestStation.lng);
+
+      for (let i = 1; i < stations.length; i++) {
+          const station = stations[i];
+          const distance = calculateDistance(userLat, userLng, station.lat, station.lng);
+
+          if (distance < closestDistance) {
+              closestDistance = distance;
+              closestStation = station;
+          }
+      }
+
+      return closestStation.station_id;
+  } else {
+      // 一つしか駅が見つからない場合
+      return stations[0].station_id;
+  }
+};

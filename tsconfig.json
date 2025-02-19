@@ -14,7 +14,7 @@
     ],
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
-    "outDir": "./dist",
+    "outDir": "./dist",    
     "allowSyntheticDefaultImports": true
   },
   "include": ["src/**/*"]  // src フォルダを含める

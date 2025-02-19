@@ -1,10 +1,5 @@
 .content {
-    padding: 10px;
-    overflow-y: scroll; /* 常にスクロールバーを表示 */
-    font-size: 14px;
-    background-color: rgb(221, 221, 221);
-    box-sizing: border-box;
-    -webkit-overflow-scrolling: touch; /* iOSでのスムーズスクロール */
+    flex: 0 0 100%
 }
 main {
     padding: 10px;
