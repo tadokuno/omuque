@@ -1,0 +1,36 @@
+.content {
+    flex: 0 0 100%
+}
+main {
+    padding: 10px;
+    overflow-y: scroll; /* 常にスクロールバーを表示 */
+    font-size: 14px;
+    background-color: rgb(221, 221, 221);
+    box-sizing: border-box;
+    -webkit-overflow-scrolling: touch; /* iOSでのスムーズスクロール */
+}
+.text label, input {
+    display: inline-block;
+    margin-right: 10px; /* ラベルと入力欄の間に余白を追加 */
+}
+.file-upload label, input {
+    display: inline-block;
+    margin-right: 10px; /* ラベルと入力欄の間に余白を追加 */
+}
+
+.text input {
+    width: 200px; /* 入力欄の幅を調整 */
+}
+.input-window form {
+    background-color: rgb(221, 221, 221);
+}
+.complete-message {
+    display: none;
+    padding: 10px;
+    margin-top: 10px;
+    border: 2px solid #808080;
+    background-color: #d4d0c8;
+    box-shadow: inset 1px 1px 0 #ffffff, inset -1px -1px 0 #000000;
+    font-size: 12px;
+    text-align: center;
+}

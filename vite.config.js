@@ -6,7 +6,7 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [
     build({
-      entry: ['src/api/script.ts','src/index.tsx' ],  // 全てのエントリーポイント
+      entry: 'src/index.tsx',  // 全てのエントリーポイント
       rollupOptions: {
         output: {
           preserveModules: true,  // 🔥 これを追加
